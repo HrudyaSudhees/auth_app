@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Python virtual environment
+venv/
+.venv/
+
+# Environment variables / secrets
+.env
+
+# Node
+node_modules/
+dist/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing / Python tooling
+.pytest_cache/
+.mypy_cache/cookies.txt
