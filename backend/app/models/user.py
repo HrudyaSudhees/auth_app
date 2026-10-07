@@ -8,7 +8,6 @@ from app.database.connection import Base
 
 class User(Base):
     __tablename__ = "users"
-
     id: Mapped[int] = mapped_column(
         primary_key=True,
         index=True,
@@ -54,4 +53,15 @@ class User(Base):
         DateTime,
         default=datetime.utcnow,
         nullable=False,
+    )
+
+
+    name: Mapped[str | None] = mapped_column(
+        String(100),
+        nullable=True,
+    )
+
+    gender: Mapped[str | None] = mapped_column(
+        String(20),
+        nullable=True,
     )

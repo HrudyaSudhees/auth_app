@@ -3,6 +3,15 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.schemas.auth import (
+    DeleteAccountRequest,
+    LoginRequest,
+    PasswordChange,
+    ProfileUpdate,
+    RegisterRequest,
+    UserResponse,
+)
+
 
 from app.database.connection import get_db
 from app.models.user import User
@@ -13,6 +22,79 @@ from app.security.dependencies import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
+@router.delete("/account")
+def delete_account(
+    request: DeleteAccountRequest,
+    response: Response,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not verify_password(
+        request.password,
+        current_user.password_hash,
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Password is incorrect.",
+        )
+
+    db.delete(current_user)
+    db.commit()
+
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+    )
+
+    return {"message": "Account deleted successfully."}
+
+
+@router.patch("/password")
+def change_password(
+    request: PasswordChange,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if not verify_password(
+        request.current_password,
+        current_user.password_hash,
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Current password is incorrect.",
+        )
+
+    current_user.password_hash = hash_password(
+        request.new_password
+    )
+
+    db.commit()
+
+    return {"message": "Password changed successfully."}
+
+@router.patch("/profile", response_model=UserResponse)
+def update_profile(
+    request: ProfileUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if request.name is not None:
+        current_user.name = request.name
+
+    if request.age is not None:
+        current_user.age = request.age
+
+    if request.gender is not None:
+        current_user.gender = request.gender
+
+    db.commit()
+    db.refresh(current_user)
+
+    return current_user
+
+@router.get("/role")
+def get_role(current_user: User = Depends(get_current_user)):
+    return {"role": current_user.role}
 
 @router.post(
     "/register",
@@ -26,14 +108,12 @@ def register_user(
     username = request.username.strip().lower()
     email = str(request.email).strip().lower()
 
-    # Check that both passwords match
     if request.password != request.confirm_password:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Passwords do not match.",
         )
 
-    # Check whether username already exists
     existing_username = db.scalar(
         select(User).where(User.username == username)
     )
@@ -44,7 +124,6 @@ def register_user(
             detail="Username already exists.",
         )
 
-    # Check whether email already exists
     existing_email = db.scalar(
         select(User).where(User.email == email)
     )
@@ -55,12 +134,11 @@ def register_user(
             detail="Email already exists.",
         )
 
-    # Hash the password before storing it
     password_hash = hash_password(request.password)
 
     user = User(
-        username=request.username,
-        email=request.email,
+        username=username,
+        email=email,
         password_hash=password_hash,
         age=request.age,
         avatar=request.avatar,
