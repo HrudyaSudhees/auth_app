@@ -4,6 +4,7 @@ import {
   getCurrentUser,
   loginUser,
   logoutUser,
+  updateProfile,
 } from "../services/authApi";
 
 const AuthContext = createContext(null);
@@ -37,11 +38,20 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  async function updateUserProfile(profileData) {
+    const updatedUser = await updateProfile(profileData);
+
+    setUser(updatedUser);
+
+    return updatedUser;
+  }
+
   const value = {
     user,
     loading,
     login,
     logout,
+    updateUserProfile,
   };
 
   return (

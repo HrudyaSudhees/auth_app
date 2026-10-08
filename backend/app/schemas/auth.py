@@ -30,7 +30,9 @@ class UserResponse(BaseModel):
     username: str
     email: EmailStr
     role: Role
+    name: str | None
     age: int | None
+    gender: Gender | None
     avatar: str
 
 class ProfileUpdate(BaseModel):
