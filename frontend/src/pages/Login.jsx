@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import PasswordInput from "../components/PasswordInput";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
@@ -55,13 +56,10 @@ function Login() {
             Password
           </label>
 
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             value={password}
-            onChange={(event) =>
-              setPassword(event.target.value)
-            }
+            onChange={(event) => setPassword(event.target.value)}
             required
           />
         </div>

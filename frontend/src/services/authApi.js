@@ -96,3 +96,30 @@ export async function updateProfile(profileData) {
 
   return data;
 }
+
+export async function changePassword(currentPassword, newPassword) {
+  const response = await fetch(`${API_URL}/auth/password`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({
+      current_password: currentPassword,
+      new_password: newPassword,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    if (Array.isArray(data.detail)) {
+      const messages = data.detail.map((error) => error.msg);
+      throw new Error(messages.join(", "));
+    }
+
+    throw new Error(data.detail || "Password change failed.");
+  }
+
+  return data;
+}

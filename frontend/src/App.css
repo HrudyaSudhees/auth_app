@@ -202,3 +202,27 @@
   background-color: #e0ecff;
   color: #1456a0;
 }
+
+.password-input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 185px;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 55px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 2px 5px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.8rem;
+}

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import PasswordInput from "../components/PasswordInput";
 import { useAuth } from "../context/AuthContext";
 
 function Profile() {
-  const { user, updateUserProfile } = useAuth();
+  const { user, updateUserProfile, updatePassword } = useAuth();
   const navigate = useNavigate();
 
   const [name, setName] = useState(user.name || "");
@@ -14,6 +15,11 @@ function Profile() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [passwordSubmitting, setPasswordSubmitting] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -36,6 +42,26 @@ function Profile() {
       setError(error.message);
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handlePasswordSubmit(event) {
+    event.preventDefault();
+
+    setPasswordError("");
+    setPasswordSuccess("");
+    setPasswordSubmitting(true);
+
+    try {
+      await updatePassword(currentPassword, newPassword);
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setPasswordSuccess("Password changed successfully.");
+    } catch (error) {
+      setPasswordError(error.message);
+    } finally {
+      setPasswordSubmitting(false);
     }
   }
 
@@ -100,6 +126,43 @@ function Profile() {
 
         <button type="submit" disabled={submitting}>
           {submitting ? "Saving..." : "Save Changes"}
+        </button>
+      </form>
+
+      <h2>Change Password</h2>
+
+      <form onSubmit={handlePasswordSubmit}>
+        <div>
+          <label htmlFor="currentPassword">
+            Current Password
+          </label>
+
+          <PasswordInput
+            id="currentPassword"
+            value={currentPassword}
+            onChange={(event) => setCurrentPassword(event.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="newPassword">
+            New Password
+          </label>
+
+          <PasswordInput
+            id="newPassword"
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
+            required
+          />
+        </div>
+
+        {passwordError && <p>{passwordError}</p>}
+        {passwordSuccess && <p>{passwordSuccess}</p>}
+
+        <button type="submit" disabled={passwordSubmitting}>
+          {passwordSubmitting ? "Changing..." : "Change Password"}
         </button>
       </form>
 

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 import {
+  changePassword,
   getCurrentUser,
   loginUser,
   logoutUser,
@@ -46,12 +47,17 @@ export function AuthProvider({ children }) {
     return updatedUser;
   }
 
+  async function updatePassword(currentPassword, newPassword) {
+    return await changePassword(currentPassword, newPassword);
+  }
+
   const value = {
     user,
     loading,
     login,
     logout,
     updateUserProfile,
+    updatePassword,
   };
 
   return (

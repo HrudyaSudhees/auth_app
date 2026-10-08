@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import PasswordInput from "../components/PasswordInput";
 import { registerUser } from "../services/authApi";
 
 function Register() {
@@ -133,13 +134,10 @@ function Register() {
             Password
           </label>
 
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             value={password}
-            onChange={(event) =>
-              setPassword(event.target.value)
-            }
+            onChange={(event) => setPassword(event.target.value)}
             required
           />
         </div>
@@ -149,13 +147,10 @@ function Register() {
             Confirm Password
           </label>
 
-          <input
+          <PasswordInput
             id="confirmPassword"
-            type="password"
             value={confirmPassword}
-            onChange={(event) =>
-              setConfirmPassword(event.target.value)
-            }
+            onChange={(event) => setConfirmPassword(event.target.value)}
             required
           />
         </div>
