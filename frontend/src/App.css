@@ -182,3 +182,23 @@
     border-right-color: var(--border);
   }
 }
+
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-badge.admin {
+  background-color: #ffe0e0;
+  color: #b00020;
+}
+
+.role-badge.user {
+  background-color: #e0ecff;
+  color: #1456a0;
+}

@@ -19,10 +19,13 @@ function Dashboard() {
     <div>
       <h1>Dashboard</h1>
 
-      <p>Welcome, {user.username}!</p>
+      <p>Welcome, {user.name}!</p>
 
       <p>
-        Role: <strong>{user.role}</strong>
+        Role:{" "}
+        <span className={`role-badge ${user.role}`}>
+          {user.role}
+        </span>
       </p>
 
       <p>Email: {user.email}</p>
